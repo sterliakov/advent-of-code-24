@@ -1,5 +1,5 @@
-#include<stdlib.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "days/common.h"
 
 #define STR(t) #t
@@ -15,8 +15,7 @@
     #error INFILE must be defined
 #endif
 
-int main(void)
-{
+int main(void) {
     FILE *input = fopen(INPUT_FILE, "r");
     if (input == NULL) {
         printf("%s", INPUT_FILE);

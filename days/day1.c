@@ -1,17 +1,15 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "common.h"
 
-int cmp(const void *left, const void *right)
-{
+int cmp(const void *left, const void *right) {
     int a = *(int *)left;
     int b = *(int *)right;
     return a < b ? -1 : a > b ? +1 : 0;
 }
 
-size_t read_arrays(FILE *input, int **av, int **bv)
-{
+size_t read_arrays(FILE *input, int **av, int **bv) {
     size_t count = 0;
     size_t arr_size = 2;
     int *a = malloc(arr_size * sizeof(int));
@@ -48,8 +46,7 @@ size_t read_arrays(FILE *input, int **av, int **bv)
     return count;
 }
 
-void part1(FILE *input)
-{
+void part1(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
@@ -68,9 +65,7 @@ void part1(FILE *input)
     free(b);
 }
 
-
-void part2(FILE *input)
-{
+void part2(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
@@ -84,8 +79,10 @@ void part2(FILE *input)
         if (a[i] == b[j]) {
             int a_reps = 1, b_reps = 1;
             int elem = a[i];
-            while (++i < count && a[i] == elem) a_reps++;
-            while (++j < count && b[j] == elem) b_reps++;
+            while (++i < count && a[i] == elem)
+                a_reps++;
+            while (++j < count && b[j] == elem)
+                b_reps++;
             sum += elem * a_reps * b_reps;
         } else if (a[i] < b[j]) {
             i++;
