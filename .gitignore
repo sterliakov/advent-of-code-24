@@ -1,0 +1,4 @@
+main
+*.o
+inputs/**/real.txt
+inputs/**/real*.txt
