@@ -13,4 +13,4 @@ run: day
 	./main
 
 check: day
-	valgrind -s --leak-check=full  ./main
+	valgrind -s --leak-check=full ./main
