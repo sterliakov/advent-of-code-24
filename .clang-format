@@ -4,5 +4,6 @@ BasedOnStyle: Chromium
 IndentWidth: 4
 
 AlignAfterOpenBracket: BlockIndent
+BreakBeforeBinaryOperators: All
 IndentPPDirectives: BeforeHash
 PointerAlignment: Right
