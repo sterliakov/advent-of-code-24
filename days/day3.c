@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "common.h"
 
-void part1(FILE *input) {
+long part1(FILE *input) {
     long total = 0;
     int a, b;
     char end[2];
@@ -20,10 +20,10 @@ void part1(FILE *input) {
         break;
     } while (1);
 
-    printf("Part 1: %ld\n", total);
+    return total;
 }
 
-void part2(FILE *input) {
+long part2(FILE *input) {
     long total = 0;
     int a, b;
     int read_1 = -1, read_2 = -1;
@@ -58,5 +58,5 @@ void part2(FILE *input) {
         break;
     } while (1);
 
-    printf("Part 2: %ld\n", total);
+    return total;
 }

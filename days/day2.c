@@ -44,9 +44,10 @@ int report_is_safe(
     return 1;
 }
 
-int solve(FILE *input, const bool can_have_error) {
+long solve(FILE *input, const bool can_have_error) {
     char line[MAX_LINE];
-    int count = 0, line_nr = 0;
+    long count = 0;
+    int line_nr = 0;
     while (fgets(line, MAX_LINE, input) != NULL) {
         line_nr++;
         size_t i = 0;
@@ -69,11 +70,9 @@ int solve(FILE *input, const bool can_have_error) {
     return count;
 }
 
-void part1(FILE *input) {
-    int count = solve(input, false);
-    printf("Part 1: %d\n", count);
+long part1(FILE *input) {
+    return solve(input, false);
 }
-void part2(FILE *input) {
-    int count = solve(input, true);
-    printf("Part 2: %d\n", count);
+long part2(FILE *input) {
+    return solve(input, true);
 }

@@ -23,10 +23,12 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    part1(input);
+    long result_1 = part1(input);
+    printf("Part 1: %ld\n", result_1);
 
     rewind(input);
-    part2(input);
+    long result_2 = part2(input);
+    printf("Part 2: %ld\n", result_2);
 
     fclose(input);
     return EXIT_SUCCESS;

@@ -1,5 +1,5 @@
 #ifndef AOC24_COMMON_H
 #define AOC24_COMMON_H
-void part1(FILE *input);
-void part2(FILE *input);
+long part1(FILE *input);
+long part2(FILE *input);
 #endif

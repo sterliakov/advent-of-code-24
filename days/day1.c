@@ -46,7 +46,7 @@ size_t read_arrays(FILE *input, int **av, int **bv) {
     return count;
 }
 
-void part1(FILE *input) {
+long part1(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
@@ -59,13 +59,12 @@ void part1(FILE *input) {
         sum += abs(b[i] - a[i]);
     }
 
-    printf("Part 1: %ld\n", sum);
-
     free(a);
     free(b);
+    return sum;
 }
 
-void part2(FILE *input) {
+long part2(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
@@ -91,8 +90,7 @@ void part2(FILE *input) {
         }
     }
 
-    printf("Part 2: %ld\n", sum);
-
     free(a);
     free(b);
+    return sum;
 }
