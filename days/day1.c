@@ -73,7 +73,7 @@ void part2(FILE *input) {
     qsort(a, count, sizeof(int), cmp);
     qsort(b, count, sizeof(int), cmp);
 
-    int i = 0, j = 0;
+    size_t i = 0, j = 0;
     long sum = 0;
     while (i < count && j < count) {
         if (a[i] == b[j]) {
