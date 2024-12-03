@@ -1,6 +1,6 @@
 .PHONY: day run check
 
-CFLAGS := -Wall -Wextra -Wstrict-prototypes -pedantic --std=c11 -O3
+CFLAGS := -Wall -Wextra -Wstrict-prototypes -pedantic --std=c17 -O3
 
 day:
 ifndef DAY
