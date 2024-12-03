@@ -5,11 +5,7 @@
 
 #define MAX_LINE 80
 
-int report_is_safe(
-    const char *line,
-    const bool can_have_error,
-    const int skip
-) {
+int report_is_safe(const char *line, bool can_have_error, int skip) {
     const char *line0 = line;
     int a, b, pos;
     if (skip == 0) {
@@ -44,7 +40,7 @@ int report_is_safe(
     return 1;
 }
 
-long solve(FILE *input, const bool can_have_error) {
+long solve(FILE *input, bool can_have_error) {
     char line[MAX_LINE];
     long count = 0;
     int line_nr = 0;
