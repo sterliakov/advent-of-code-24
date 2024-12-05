@@ -15,5 +15,8 @@ endif
 run: day
 	./main
 
+time: day
+	bash -c 'time ./main'
+
 check: day
 	valgrind -s --leak-check=full ./main
