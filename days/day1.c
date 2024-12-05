@@ -19,27 +19,33 @@ size_t read_arrays(FILE *input, int **av, int **bv) {
     }
     int *b = malloc(arr_size * sizeof(int));
     if (b == NULL) {
+        free(a);
         perror("Malloc failed");
         return 0;
     }
     while (true) {
         if (count >= arr_size) {
+            int *olda = a;
             a = realloc(a, arr_size * sizeof(int) * 2);
             if (a == NULL) {
+                free(olda);
                 perror("Malloc failed");
                 return 0;
             }
+            int *oldb = b;
             b = realloc(b, arr_size * sizeof(int) * 2);
             if (b == NULL) {
+                free(a);
+                free(oldb);
                 perror("Malloc failed");
                 return 0;
             }
             arr_size *= 2;
         }
-        if (fscanf(input, "%d %d", &a[count], &b[count]) < 2) {
+        count++;
+        if (fscanf(input, "%d %d", &a[count - 1], &b[count - 1]) < 2) {
             break;
         }
-        count++;
     }
     *av = a;
     *bv = b;
@@ -50,6 +56,9 @@ long part1(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
+    if (count == 0) {
+        return -1;
+    }
 
     qsort(a, count, sizeof(int), cmp);
     qsort(b, count, sizeof(int), cmp);
@@ -68,6 +77,9 @@ long part2(FILE *input) {
     int *a = NULL;
     int *b = NULL;
     size_t count = read_arrays(input, &a, &b);
+    if (count == 0) {
+        return -1;
+    }
 
     qsort(a, count, sizeof(int), cmp);
     qsort(b, count, sizeof(int), cmp);
@@ -82,7 +94,7 @@ long part2(FILE *input) {
                 a_reps++;
             while (++j < count && b[j] == elem)
                 b_reps++;
-            sum += elem * a_reps * b_reps;
+            sum += (long)elem * a_reps * b_reps;
         } else if (a[i] < b[j]) {
             i++;
         } else {

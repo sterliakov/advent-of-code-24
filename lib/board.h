@@ -2,12 +2,12 @@
 #include <stddef.h>
 #include <stdio.h>
 
-typedef struct point {
+typedef struct __attribute__((aligned(16))) point {
     size_t r;
     size_t c;
 } point_t;
 
-typedef struct board {
+typedef struct __attribute__((aligned(32))) board {
     char *body;
     size_t height;
     size_t width;

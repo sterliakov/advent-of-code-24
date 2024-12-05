@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "board.h"
 
@@ -9,10 +10,11 @@ bool board_read(FILE *input, board_t *board) {
         return false;
     }
 
-    char buf[80], tmp[2];
+    const size_t bufsize = 80;
+    char buf[bufsize], tmp[2];
     int pos = 0;
     while (true) {
-        int filled_vars = fscanf(input, "%4[^\n]%n%1[\n]", buf, &pos, tmp);
+        int filled_vars = fscanf(input, "%80[^\n]%n%1[\n]", buf, &pos, tmp);
         switch (filled_vars) {
             case 2:
                 if (board->width == 0) {
@@ -22,8 +24,10 @@ bool board_read(FILE *input, board_t *board) {
             case 1:
                 if (read + pos >= size) {
                     size *= 2;
+                    char *old_body = board->body;
                     board->body = realloc(board->body, size * sizeof(char));
                     if (board->body == NULL) {
+                        free(old_body);
                         return false;
                     }
                 }
@@ -32,6 +36,10 @@ bool board_read(FILE *input, board_t *board) {
                 continue;
         }
         break;
+    }
+    if (board->width == 0) {
+        free(board->body);
+        return false;
     }
     board->height = read / board->width;
     return true;
@@ -58,7 +66,7 @@ char board_at(const board_t *board, point_t point) {
     return board->body[point.r * board->width + point.c];
 }
 
-typedef struct offset {
+typedef struct __attribute__((aligned(16))) offset {
     ptrdiff_t dr;
     ptrdiff_t dc;
 } offset_t;

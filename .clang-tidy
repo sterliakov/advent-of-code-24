@@ -1,0 +1,2 @@
+Checks: 'clang-diagnostic-*,clang-analyzer-*,modernize-*,altera-*,-altera-unroll-loops,-altera-id-dependent-backward-branch,bugprone-*,-bugprone-easily-swappable-parameters,-bugprone-suspicious-include,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'
+WarningsAsErrors: '*'

@@ -12,7 +12,7 @@ long part1(FILE *input) {
                 break;
             case 'm':
                 while (fscanf(input, "ul(%d,%d%1[)]", &a, &b, end) == 3) {
-                    total += a * b;
+                    total += (long)a * b;
                 };
             default:
                 continue;
@@ -36,7 +36,7 @@ long part2(FILE *input) {
             case 'm':
                 if (enabled) {
                     while (fscanf(input, "ul(%d,%d%1[)]", &a, &b, end) == 3) {
-                        total += a * b;
+                        total += (long)a * b;
                     }
                 }
                 continue;

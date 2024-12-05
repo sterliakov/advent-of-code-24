@@ -17,10 +17,19 @@ repos:
     -   id: shellcheck
         args: [-x, -P, SCRIPTDIR]
 
+-   repo: https://github.com/cpp-linter/cpp-linter-hooks
+    rev: v0.5.1
+    hooks:
+      - id: clang-format
+        args: [--style=file, --version=16]
+
 -   repo: local
     hooks:
-    -   id: clang-format
-        name: clang-format
-        entry: clang-format -i
+    -   id: clang-tidy
+        name: clang-tidy
+        # clang-tidy-14
+        entry: clang-tidy
         language: system
         types: [c]
+        # Needs defines which I can't pass here
+        exclude: main.c
