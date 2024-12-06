@@ -66,10 +66,13 @@ char board_at(const board_t *board, point_t point) {
     return board->body[point.r * board->width + point.c];
 }
 
-typedef struct __attribute__((aligned(16))) offset {
-    ptrdiff_t dr;
-    ptrdiff_t dc;
-} offset_t;
+bool board_set(const board_t *board, point_t point, char val) {
+    if (point.r >= board->height || point.c >= board->width) {
+        return false;
+    }
+    board->body[point.r * board->width + point.c] = val;
+    return true;
+}
 
 /**
  * Extract a slice of given length from the board.
