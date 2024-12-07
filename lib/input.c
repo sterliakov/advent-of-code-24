@@ -1,22 +1,26 @@
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int csv_int_read_line(
+bool csv_int_read_line(
     FILE *input,
+    char sep,
     int *dest[static 1],
     size_t allocated[static 1],
     size_t *amount
 ) {
     size_t size = *allocated, curr = 0;
     if (size == 0) {
-        return -1;
+        return false;
     }
     int *arr = *dest;
     char comma[2];
     int a;
+    char fmt[8];
+    sprintf(fmt, "%%d%%1[%c]", sep);
     while (1) {
-        int nvars = fscanf(input, "%d%1[,]", &a, comma);
+        int nvars = fscanf(input, fmt, &a, comma);
         if (nvars < 1) {
             break;
         }
@@ -26,7 +30,7 @@ int csv_int_read_line(
             arr = realloc(arr, size * sizeof(int));
             if (arr == NULL) {
                 free(oldptr);
-                return -1;
+                return false;
             }
         }
         arr[curr] = a;
@@ -37,5 +41,5 @@ int csv_int_read_line(
     }
     *dest = arr;
     *amount = curr;
-    return 0;
+    return true;
 }

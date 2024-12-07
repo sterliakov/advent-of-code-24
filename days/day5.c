@@ -44,7 +44,7 @@ long solve(FILE *input, long (*chk)(int *, size_t, rule_t *, size_t)) {
     }
     long total = 0;
     while (true) {
-        if (csv_int_read_line(input, &line, &allocated, &nums_count) < 0) {
+        if (!csv_int_read_line(input, ',', &line, &allocated, &nums_count)) {
             perror("Failed to read the input array");
             free(line);
             free(rules);
