@@ -45,11 +45,11 @@ bool board_read(FILE *input, board_t *board) {
     return true;
 }
 
-void board_delete(const board_t *board) {
+void board_delete(board_t board[const static 1]) {
     free(board->body);
 }
 
-void board_print(const board_t *board) {
+void board_print(board_t board[const static 1]) {
     printf("============");
     for (size_t i = 0; i < board->height * board->width; i++) {
         if (i % board->width == 0)
@@ -59,19 +59,23 @@ void board_print(const board_t *board) {
     printf("\n============\n");
 }
 
-char board_at(const board_t *board, point_t point) {
+char board_at(board_t board[const static 1], point_t point) {
     if (point.r >= board->height || point.c >= board->width) {
         return 0;
     }
     return board->body[point.r * board->width + point.c];
 }
 
-bool board_set(const board_t *board, point_t point, char val) {
+bool board_set(board_t board[const static 1], point_t point, char val) {
     if (point.r >= board->height || point.c >= board->width) {
         return false;
     }
     board->body[point.r * board->width + point.c] = val;
     return true;
+}
+
+size_t board_length(board_t board[const static 1]) {
+    return board->width * board->height;
 }
 
 /**
@@ -84,7 +88,7 @@ bool board_set(const board_t *board, point_t point, char val) {
  * @return bool - true on success, false if out of bounds
  **/
 bool board_slice(
-    const board_t *board,
+    board_t board[const static 1],
     point_t start,
     char direction,
     size_t count,

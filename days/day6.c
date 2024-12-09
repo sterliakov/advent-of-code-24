@@ -13,10 +13,10 @@ const char MOVE_MASK = (1 << DIRECTIONS_COUNT) - 1;
 const char EMPTY = 1 << DIRECTIONS_COUNT;
 const char WALL = 1 << (DIRECTIONS_COUNT + 1);
 
-bool board_translate(board_t *board, point_t *start) {
+bool board_translate(board_t board[static 1], point_t *start) {
     size_t offset = 0;
-    size_t board_size = board->width * board->height;
-    for (char *ch = board->body + board_size - 1; ch >= board->body; ch--) {
+    for (char *ch = board->body + board_length(board) - 1; ch >= board->body;
+         ch--) {
         switch (*ch) {
             case '^':
                 offset = ch - board->body;
@@ -34,7 +34,7 @@ bool board_translate(board_t *board, point_t *start) {
     return true;
 }
 
-long traverse(board_t *board, point_t pos) {
+long traverse(board_t board[static 1], point_t pos) {
     static offset_t directions[DIRECTIONS_COUNT]
         = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
     size_t dir_index = 0;
@@ -91,7 +91,7 @@ long part2(FILE *input) {
         perror("Failed to read the board");
         return -1;
     }
-    size_t board_size = board.width * board.height;
+    size_t board_size = board_length(&board);
 
     point_t start;
     if (!board_translate(&board, &start)) {
