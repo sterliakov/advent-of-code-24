@@ -62,7 +62,7 @@ long part1(FILE *input) {
     }
 
     long total = 0;
-    for (size_t i = len; --i;) {
+    for (size_t i = 0; i < len; i++) {
         total += board.body[i] == '#';
     }
 
@@ -111,7 +111,7 @@ long part2(FILE *input) {
     }
 
     long total = 0;
-    for (size_t i = len; --i;) {
+    for (size_t i = 0; i < len; i++) {
         total += board.body[i] == '#';
     }
 
