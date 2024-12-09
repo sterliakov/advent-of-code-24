@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include "common.h"
 
-typedef struct __attribute__((aligned(16))) entry_t {
-    int free_size;
-    int size;
+typedef struct __attribute__((aligned(32))) entry_t {
+    size_t free_size;
+    size_t size;
     int id;
 } entry_t;
 
@@ -51,7 +51,7 @@ long part1(FILE *input) {
     long mp = 0;
     size_t last = count - 1;
     for (size_t i = 0; i < count; i++) {
-        for (int s = entries[i].size; s; s--) {
+        for (size_t s = entries[i].size; s; s--) {
             total += (mp++) * entries[i].id;
         }
         while (entries[i].free_size && last > i && last < count) {
@@ -84,29 +84,52 @@ long part2(FILE *input) {
     }
 
     long mp = 0;
-    size_t last = count - 1;
+    // Track last position: last[i] is the last i where we can encounter size=i.
+    size_t last_known[10]
+        = {0,         count - 1, count - 1, count - 1, count - 1,
+           count - 1, count - 1, count - 1, count - 1, count - 1};
     for (size_t i = 0; i < count; i++) {
-        for (int s = entries[i].size; s; s--) {
+        for (size_t s = entries[i].size; s; s--) {
             total += (mp++) * entries[i].id;
         }
-        while (entries[i].free_size && last > i && last < count) {
-            while (last < count
-                   && (entries[last].size == 0
-                       || entries[last].size > entries[i].free_size))
-                last -= 2;
-            if (last < count && last > i) {
-                int moved = entries[last].size;
-                for (int s = moved; s; s--) {
+
+        while (entries[i].free_size > 0) {
+            bool found = false;
+            size_t last = 0;
+            for (size_t s = 0; s <= entries[i].free_size; s++) {
+                // Traverse all sizes until found, pick the last index.
+                // This lets us have constant O(n) traverse (once for every size
+                // in 0..10) n instead of rescanning from the very end.
+                size_t p = last_known[s];
+                while (p < count && p > i
+                       && (entries[p].size == 0 || entries[p].size != s))
+                    p -= 2;
+                if (p < count) {
+                    if (p > i) {
+                        last_known[s] = p;
+                        if (last < p)
+                            last = p;
+                        found = true;
+                    }
+                } else {
+                    last_known[s] = 0;
+                }
+            }
+
+            if (found) {
+                size_t moved = entries[last].size;
+                for (size_t s = moved; s; s--) {
                     total += (mp++) * entries[last].id;
                 }
                 entries[i].size += moved;
                 entries[i].free_size -= moved;
                 entries[last].free_size = moved;
                 entries[last].size = 0;
+            } else {
+                break;
             }
         }
-        last = count - 1;
-        mp += entries[i].free_size;
+        mp += (long)entries[i].free_size;
     }
 
     free(entries);
