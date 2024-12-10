@@ -23,6 +23,8 @@ void board_print(board_t board[const static 1]);
 void board_delete(board_t board[const static 1]);
 char board_at(board_t board[const static 1], point_t point);
 bool board_set(board_t board[const static 1], point_t point, char val);
+bool board_p2i(board_t board[const static 1], point_t point, size_t *index);
+point_t board_i2p(board_t board[const static 1], size_t index);
 size_t board_length(board_t board[const static 1]);
 bool board_slice(
     board_t board[const static 1],

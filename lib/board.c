@@ -59,18 +59,32 @@ void board_print(board_t board[const static 1]) {
     printf("\n============\n");
 }
 
-char board_at(board_t board[const static 1], point_t point) {
-    if (point.r >= board->height || point.c >= board->width) {
-        return 0;
-    }
-    return board->body[point.r * board->width + point.c];
-}
-
-bool board_set(board_t board[const static 1], point_t point, char val) {
+bool board_p2i(board_t board[const static 1], point_t point, size_t *index) {
     if (point.r >= board->height || point.c >= board->width) {
         return false;
     }
-    board->body[point.r * board->width + point.c] = val;
+    *index = point.r * board->width + point.c;
+    return true;
+}
+
+point_t board_i2p(board_t board[const static 1], size_t index) {
+    return (point_t){index / board->width, index % board->width};
+}
+
+char board_at(board_t board[const static 1], point_t point) {
+    size_t i = 0;
+    if (!board_p2i(board, point, &i)) {
+        return 0;
+    }
+    return board->body[i];
+}
+
+bool board_set(board_t board[const static 1], point_t point, char val) {
+    size_t i = 0;
+    if (!board_p2i(board, point, &i)) {
+        return false;
+    }
+    board->body[i] = val;
     return true;
 }
 
@@ -122,7 +136,7 @@ bool board_slice(
             break;
         default:
             // Unknown
-            return -1;
+            return false;
     }
     for (size_t i = 0; i < count; i++) {
         if ((dest[i] = board_at(board, start)) == 0) {
