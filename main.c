@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "days/common.h"
 
 #define STR(t) #t
@@ -15,6 +16,19 @@
     #error INFILE must be defined
 #endif
 
+#ifdef TIMING
+    #define MEASURE(expr)                            \
+        do {                                         \
+            clock_t start = clock(), diff;           \
+            expr;                                    \
+            diff = clock() - start;                  \
+            int msec = diff * 1000 / CLOCKS_PER_SEC; \
+            printf("Time taken: %d ms\n", msec);     \
+        } while (0);
+#else
+    #define MEASURE(expr) expr;
+#endif
+
 int main(void) {
     FILE *input = fopen(INPUT_FILE, "r");
     if (input == NULL) {
@@ -23,12 +37,10 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    long result_1 = part1(input);
-    printf("Part 1: %ld\n", result_1);
+    MEASURE(long result_1 = part1(input); printf("Part 1: %ld\n", result_1););
 
     rewind(input);
-    long result_2 = part2(input);
-    printf("Part 2: %ld\n", result_2);
+    MEASURE(long result_2 = part2(input); printf("Part 2: %ld\n", result_2););
 
     fclose(input);
     return EXIT_SUCCESS;

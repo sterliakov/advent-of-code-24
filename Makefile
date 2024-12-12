@@ -15,8 +15,8 @@ endif
 run: day
 	./main
 
-time: day
-	bash -c 'time ./main'
+time: CFLAGS += -DTIMING=1
+time: run
 
 check: day
 	valgrind -s --leak-check=full ./main
