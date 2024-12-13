@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -65,6 +66,10 @@ bool board_p2i(board_t board[const static 1], point_t point, size_t *index) {
     }
     *index = point.r * board->width + point.c;
     return true;
+}
+size_t board_p2i_or_panic(board_t board[const static 1], point_t point) {
+    assert(point.r < board->height && point.c < board->width);
+    return point.r * board->width + point.c;
 }
 
 point_t board_i2p(board_t board[const static 1], size_t index) {
