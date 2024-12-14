@@ -17,13 +17,13 @@
 #endif
 
 #ifdef TIMING
-    #define MEASURE(expr)                            \
-        do {                                         \
-            clock_t start = clock(), diff;           \
-            expr;                                    \
-            diff = clock() - start;                  \
-            int msec = diff * 1000 / CLOCKS_PER_SEC; \
-            printf("Time taken: %d ms\n", msec);     \
+    #define MEASURE(expr)                                \
+        do {                                             \
+            clock_t start = clock(), diff;               \
+            expr;                                        \
+            diff = clock() - start;                      \
+            float msec = 1000.0 * diff / CLOCKS_PER_SEC; \
+            printf("Time taken: %.3f ms\n", msec);       \
         } while (0);
 #else
     #define MEASURE(expr) expr;
@@ -32,7 +32,7 @@
 int main(void) {
     FILE *input = fopen(INPUT_FILE, "r");
     if (input == NULL) {
-        printf("%s", INPUT_FILE);
+        fprintf(stderr, "%s\n", INPUT_FILE);
         perror("File not found");
         return EXIT_FAILURE;
     }

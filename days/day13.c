@@ -1,8 +1,9 @@
-#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"
+
+#include "../lib/utils.c"
 
 typedef struct __attribute__((aligned(16))) pair_t {
     long x;
@@ -60,18 +61,18 @@ size_t read_input(FILE *input, machine_t **dest) {
 }
 
 // Returns -1 for no solution,
-// -2 for infinitely many solutions,
+// -2 for (maybe) infinitely many solutions,
 // 0 for unique solution.
 // Writes a and b iff a unique solution was found (returns 0)
 int linsolve(machine_t *m, long a[static 1], long b[static 1]) {
     long d = m->left.x * m->right.y - m->left.y * m->right.x;
     long first = m->target.x * m->right.y - m->target.y * m->right.x;
-    long second = m->left.x * m->target.y - m->left.y * m->target.x;
     if (d == 0) {
         // Determinant is zero, either no solution (partials nonzero)
         // or infinitely many of them (partials zero)
-        return first != 0 && second != 0 ? -1 : -2;
+        return first != 0 ? -1 : -2;
     } else {
+        long second = m->left.x * m->target.y - m->left.y * m->target.x;
         // Determinant is nonzero, a solution is unique.
         if (first % d == 0 && second % d == 0) {
             // Solution is integer
@@ -102,29 +103,22 @@ long solve(machine_t *m) {
 
     // Prefer to maximize the first button unless it costs more
     long coefs[2] = {3, 1};
-    if (x1 < x2 || (x1 / x2) < 3) {
+    if (x1 / x2 < 3) {
         // First btn costs more, swap and solve
-        coefs[0] = 1;
-        coefs[1] = 3;
-        long tmp = x1;
-        x1 = x2;
-        x2 = tmp;
+        SWAP(long, coefs[0], coefs[1]);
+        SWAP(long, x1, x2);
     }
     a = x / x1;
     if (a > 100)
         a = 100;
-    b = (x - a * x1) / x2;
-    while (true) {
-        while (b <= 100 && a * x1 + b * x2 < x)
-            b++;
+    for (; a >= 0; a--) {
+        b = (x - a * x1) / x2;
         if (b > 100)
             return 0;
         if (a * x1 + b * x2 == x)
             return coefs[0] * a + coefs[1] * b;
-        a--;
-        if (a < 0)
-            return 0;
     }
+    return 0;
 }
 
 long solve2(machine_t *m) {
@@ -135,30 +129,22 @@ long solve2(machine_t *m) {
         case -1:
             return 0;
     }
+
     long x1 = m->left.x;
     long x2 = m->right.x;
     long x = m->target.x;
 
     long coefs[2] = {3, 1};
-    if (x1 < x2 || (x1 / x2) < 3) {
-        coefs[0] = 1;
-        coefs[1] = 3;
-        long tmp = x1;
-        x1 = x2;
-        x2 = tmp;
+    if (x1 / x2 < 3) {
+        SWAP(long, coefs[0], coefs[1]);
+        SWAP(long, x1, x2);
     }
-
-    a = x / x1;
-    b = (x - a * x1) / x2;
-    while (true) {
-        while (a * x1 + b * x2 < x)
-            b++;
+    for (a = x / x1; a >= 0; a--) {
+        b = (x - a * x1) / x2;
         if (a * x1 + b * x2 == x)
             return coefs[0] * a + coefs[1] * b;
-        a--;
-        if (a < 0)
-            return 0;
     }
+    return 0;
 }
 
 long part1(FILE *input) {

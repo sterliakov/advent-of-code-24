@@ -1,5 +1,12 @@
 #include <stddef.h>
 
+#define SWAP(t, a, b) \
+    do {              \
+        t tmp = (a);  \
+        (a) = (b);    \
+        (b) = tmp;    \
+    } while (0);
+
 long gcd(long a, long b) {
     long temp;
     while (b != 0) {
