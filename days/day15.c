@@ -47,15 +47,16 @@ long part1(FILE *input) {
             offset_t dir = get_offset(*c);
             point_t next0 = {.r = pos.r + dir.dr, .c = pos.c + dir.dc};
             point_t next = next0;
-            while (board_at(&board, next) == 'O') {
+            char c;
+            while ((c = board_at(&board, next)) == 'O') {
                 next = (point_t){.r = next.r + dir.dr, .c = next.c + dir.dc};
             }
-            if (board_at(&board, next) == '.') {
-                board_set(&board, pos, '.');
-                if (board_at_unchecked(&board, next0) == 'O') {
-                    board_set(&board, next, 'O');
+            if (c == '.') {
+                board_set_unchecked(&board, pos, '.');
+                if (next.r != next0.r || next.c != next0.c) {
+                    board_set_unchecked(&board, next, 'O');
                 }
-                board_set(&board, next0, '@');
+                board_set_unchecked(&board, next0, '@');
                 pos = next0;
             }
         }
@@ -82,22 +83,23 @@ bool move(board_t board[static 1], point_t start, offset_t dir, bool pair) {
         return true;
     point_t next = {.r = start.r + dir.dr, .c = start.c + dir.dc};
     bool ok = move(board, next, dir, false);
-    if (ok) {
-        board_set(board, next, c);
-        board_set(board, start, '.');
-        if (!pair && c == '[' && dir.dr != 0)
-            return move(
-                board, (point_t){.r = start.r, .c = start.c + 1}, dir, true
-            );
-        else if (!pair && c == ']' && dir.dr != 0)
-            return move(
-                board, (point_t){.r = start.r, .c = start.c - 1}, dir, true
-            );
-        else
-            return true;
-    } else {
+    if (!ok) {
         return false;
     }
+    board_set_unchecked(board, next, c);
+    board_set_unchecked(board, start, '.');
+    if (pair || dir.dr == 0)
+        return ok;
+    if (c == '[')
+        return move(
+            board, (point_t){.r = start.r, .c = start.c + 1}, dir, true
+        );
+    else if (c == ']')
+        return move(
+            board, (point_t){.r = start.r, .c = start.c - 1}, dir, true
+        );
+    else
+        return ok;
 }
 
 long part2(FILE *input) {
@@ -135,6 +137,7 @@ long part2(FILE *input) {
         }
     }
     board_delete(&start_board);
+
     point_t pos = find_start(&board);
 
     board_t clone = {NULL, 0, 0};
@@ -150,8 +153,8 @@ long part2(FILE *input) {
             offset_t dir = get_offset(*c);
             point_t next = {.r = pos.r + dir.dr, .c = pos.c + dir.dc};
             if (move(&clone, next, dir, false)) {
-                board_set(&clone, pos, '.');
-                board_set(&clone, next, '@');
+                board_set_unchecked(&clone, pos, '.');
+                board_set_unchecked(&clone, next, '@');
                 pos = next;
                 memcpy(board.body, clone.body, len * sizeof(char));
             } else {
@@ -159,13 +162,14 @@ long part2(FILE *input) {
             }
         }
     }
-
     board_delete(&clone);
 
     size_t total = 0;
     for (size_t r = 0; r < board.height; r++) {
         for (size_t c = 0; c < board.width; c++) {
-            total += board_at(&board, (point_t){r, c}) == '[' ? 100 * r + c : 0;
+            total += board_at_unchecked(&board, (point_t){r, c}) == '['
+                         ? 100 * r + c
+                         : 0;
         }
     }
 

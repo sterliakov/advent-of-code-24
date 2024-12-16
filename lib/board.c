@@ -50,7 +50,7 @@ void board_delete(board_t board[const static 1]) {
     free(board->body);
 }
 
-void board_print(board_t const board[const static 1]) {
+void board_print(board_t board[const static 1]) {
     assert(board->width > 0);
     for (size_t i = 0; i < board->width; i++) {
         putc('=', stdout);
@@ -110,13 +110,17 @@ char board_at_unchecked(board_t board[const static 1], point_t point) {
     return board->body[board_p2i_unchecked(board, point)];
 }
 
-bool board_set(board_t board[const static 1], point_t point, char val) {
+bool board_set(board_t board[static 1], point_t point, char val) {
     size_t i = 0;
     if (!board_p2i(board, point, &i)) {
         return false;
     }
     board->body[i] = val;
     return true;
+}
+
+void board_set_unchecked(board_t board[static 1], point_t point, char val) {
+    board->body[board_p2i_unchecked(board, point)] = val;
 }
 
 size_t board_length(board_t board[const static 1]) {
