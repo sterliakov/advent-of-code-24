@@ -50,14 +50,33 @@ void board_delete(board_t board[const static 1]) {
     free(board->body);
 }
 
-void board_print(board_t board[const static 1]) {
-    printf("============");
+void board_print(board_t const board[const static 1]) {
+    assert(board->width > 0);
+    for (size_t i = 0; i < board->width; i++) {
+        putc('=', stdout);
+    }
     for (size_t i = 0; i < board->height * board->width; i++) {
         if (i % board->width == 0)
             putc('\n', stdout);
         putc(board->body[i], stdout);
     }
-    printf("\n============\n");
+    putc('\n', stdout);
+    for (size_t i = 0; i < board->width; i++) {
+        putc('=', stdout);
+    }
+    putc('\n', stdout);
+}
+
+bool board_clone(board_t dest[static 1], board_t src[const static 1]) {
+    dest->width = src->width;
+    dest->height = src->height;
+    size_t len = board_length(src);
+    dest->body = malloc(len * sizeof(char));
+    if (dest->body == NULL) {
+        return false;
+    }
+    memcpy(dest->body, src->body, len * sizeof(char));
+    return true;
 }
 
 bool board_p2i(board_t board[const static 1], point_t point, size_t *index) {
@@ -71,6 +90,9 @@ size_t board_p2i_or_panic(board_t board[const static 1], point_t point) {
     assert(point.r < board->height && point.c < board->width);
     return point.r * board->width + point.c;
 }
+size_t board_p2i_unchecked(board_t board[const static 1], point_t point) {
+    return point.r * board->width + point.c;
+}
 
 point_t board_i2p(board_t board[const static 1], size_t index) {
     return (point_t){index / board->width, index % board->width};
@@ -82,6 +104,10 @@ char board_at(board_t board[const static 1], point_t point) {
         return 0;
     }
     return board->body[i];
+}
+
+char board_at_unchecked(board_t board[const static 1], point_t point) {
+    return board->body[board_p2i_unchecked(board, point)];
 }
 
 bool board_set(board_t board[const static 1], point_t point, char val) {
