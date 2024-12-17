@@ -4,6 +4,9 @@
 
 #include "board.h"
 
+#define point_add(pos, dir) \
+    ((point_t){.r = (pos).r + (dir).dr, .c = (pos).c + (dir).dc})
+
 bool board_read(FILE *input, board_t *board) {
     size_t size = 100, read = 0;
     board->body = malloc(size * sizeof(char));
@@ -180,4 +183,14 @@ bool board_slice(
         start = (point_t){start.r + offset.dr, start.c + offset.dc};
     }
     return true;
+}
+
+point_t board_find_first(board_t board[const static 1], char c) {
+    size_t len = board_length(board);
+    for (size_t i = 0; i < len; i++) {
+        if (board->body[i] == c) {
+            return board_i2p(board, i);
+        }
+    }
+    assert(false);
 }

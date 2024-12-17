@@ -38,3 +38,4 @@ bool board_slice(
     size_t count,
     char *dest
 );
+point_t board_find_first(board_t board[const static 1], char c);
