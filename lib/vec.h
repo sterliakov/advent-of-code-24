@@ -1,3 +1,6 @@
+#ifndef CUSTOM_VEC_H
+#define CUSTOM_VEC_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -49,3 +52,5 @@
         (vec).size = 0;     \
         (vec).capacity = 0; \
     } while (0)
+
+#endif

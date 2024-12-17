@@ -1,3 +1,6 @@
+#ifndef CUSTOM_INPUT_H
+#define CUSTOM_INPUT_H
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -43,3 +46,5 @@ bool csv_int_read_line(
     *amount = curr;
     return true;
 }
+
+#endif

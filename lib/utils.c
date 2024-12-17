@@ -1,3 +1,6 @@
+#ifndef CUSTOM_UTILS_H
+#define CUSTOM_UTILS_H
+
 #include <stddef.h>
 
 #define SWAP(t, a, b) \
@@ -24,3 +27,5 @@ size_t numdigits(long val) {
     }
     return n;
 }
+
+#endif
