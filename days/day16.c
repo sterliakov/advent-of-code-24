@@ -9,6 +9,17 @@
 
 static offset_t neighbours[] = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
 
+static size_t offset_index(offset_t off) {
+    for (size_t ni = 0; ni < 4; ni++) {
+        offset_t n = neighbours[ni];
+        if (n.dr == off.dr && n.dc == off.dc) {
+            return ni;
+        }
+    }
+    // UNREACHABLE, but assert(false) halves performance..
+    return 0;
+}
+
 void traverse(
     board_t board[const static 1],
     size_t dist[static 1],
@@ -22,34 +33,34 @@ void traverse(
     char c = board_at(board, pos);
     if (c != '.' && c != 'E')
         return;
+    // printf("t\n");
 
     size_t i = board_p2i_or_panic(board, pos);
-    if (dist[5 * i + 4] != 0 && dist[5 * i + 4] < curr - 1001) {
+    if (dist[5 * i + 4] != 0 && dist[5 * i + 4] <= curr - 1001) {
         return;
     }
-    for (size_t ni = 0; ni < 4; ni++) {
-        offset_t n = neighbours[ni];
-        if (n.dr == dir.dr && n.dc == dir.dc) {
-            if (dist[5 * i + ni] != 0 && dist[5 * i + ni] < curr) {
-                return;
-            } else {
-                dist[5 * i + ni] = curr;
-                if (dist[5 * i + 4] == 0 || dist[5 * i + 4] > curr)
-                    dist[5 * i + 4] = curr;
-                if (c == 'E') {
-                    *best = curr;
-                    return;
-                }
-            }
-            break;
+
+    size_t ni = offset_index(dir);
+    if (dist[5 * i + ni] != 0 && dist[5 * i + ni] <= curr) {
+        return;
+    } else {
+        dist[5 * i + ni] = curr;
+        if (dist[5 * i + 4] == 0 || dist[5 * i + 4] > curr)
+            dist[5 * i + 4] = curr;
+        if (c == 'E') {
+            *best = curr;
+            return;
         }
     }
 
     traverse(board, dist, point_add(pos, dir), dir, curr + 1, best);
-    for (size_t ni = 0; ni < 4; ni++) {
-        offset_t n = neighbours[ni];
-        if (dir.dr != n.dr || dir.dc != n.dc)
+#pragma GCC unroll 4
+    for (size_t next_dir_i = 0; next_dir_i < 4; next_dir_i++) {
+        if (next_dir_i / 2 != ni / 2) {
+            // Already went further, don't go back
+            offset_t n = neighbours[next_dir_i];
             traverse(board, dist, point_add(pos, n), n, curr + 1000 + 1, best);
+        }
     }
 }
 
@@ -91,27 +102,21 @@ bool restore(
 
     size_t i = board_p2i_or_panic(board, pos);
 
-    for (size_t ni = 0; ni < 4; ni++) {
-        offset_t n = neighbours[ni];
-        if (n.dr == dir.dr && n.dc == dir.dc) {
-            size_t curr = dist[5 * i + ni];
-            if (curr != last + 1 && curr != last + 1001) {
-                return false;
-            }
-
-            bool found_path = false;
-            for (size_t nii = 0; nii < 4; nii++) {
-                offset_t nn = neighbours[nii];
-                found_path
-                    |= restore(board, dist, vis, point_add(pos, nn), nn, curr);
-            }
-            if (found_path) {
-                vis[i] = true;
-            }
-            return found_path;
-        }
+    size_t ni = offset_index(dir);
+    size_t curr = dist[5 * i + ni];
+    if (curr != last + 1 && curr != last + 1001) {
+        return false;
     }
-    assert(false);
+
+    bool found_path = false;
+    for (size_t next_dir_i = 0; next_dir_i < 4; next_dir_i++) {
+        offset_t nn = neighbours[next_dir_i];
+        found_path |= restore(board, dist, vis, point_add(pos, nn), nn, curr);
+    }
+    if (found_path) {
+        vis[i] = true;
+    }
+    return found_path;
 }
 
 long part2(FILE *input) {
