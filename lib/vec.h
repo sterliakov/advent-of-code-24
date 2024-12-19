@@ -53,4 +53,9 @@
         (vec).capacity = 0; \
     } while (0)
 
+#define VEC_FOREACH(vec, fn)                  \
+    for (size_t i = 0; i < (vec).size; i++) { \
+        (fn)(VEC_AT((vec), i));               \
+    }
+
 #endif

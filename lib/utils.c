@@ -28,4 +28,30 @@ size_t numdigits(long val) {
     return n;
 }
 
+// same as `bsearch`, but always returning the leftmost matching entry
+inline void *bsearch_left(
+    const void *key,
+    const void *base,
+    size_t count,
+    size_t size,
+    int (*compar)(const void *, const void *)
+) {
+    while (count > 0) {
+        size_t m = (count - 1) / 2;
+        const char *p = (const char *)base + m * size;
+        int order = compar(key, p);
+        if (order < 0) {
+            count = m;
+        } else if (order > 0) {
+            base = p + size;
+            count -= m + 1;
+        } else if (m == 0) {
+            return (void *)p;
+        } else {
+            count = m + 1;
+        }
+    }
+    return NULL;
+}
+
 #endif
