@@ -19,4 +19,4 @@ time: CFLAGS += -DTIMING=1
 time: run
 
 check: day
-	valgrind -s --leak-check=full ./main
+	valgrind -s --leak-check=full --track-origins=yes ./main

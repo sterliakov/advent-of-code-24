@@ -17,7 +17,7 @@
 #define VEC_WITH_CAPACITY(vec, n)                       \
     do {                                                \
         (vec).data = malloc((n) * sizeof(*(vec).data)); \
-        if (!(vec).data) {                              \
+        if ((vec).data == NULL) {                       \
             fputs("malloc failed!\n", stderr);          \
             abort();                                    \
         }                                               \
@@ -33,7 +33,7 @@
             (vec).capacity *= 2;                                             \
             void *new_data                                                   \
                 = realloc((vec).data, (vec).capacity * sizeof(*(vec).data)); \
-            if (!new_data) {                                                 \
+            if (new_data == NULL) {                                          \
                 fprintf(stderr, "realloc failed\n");                         \
                 exit(1);                                                     \
             }                                                                \
