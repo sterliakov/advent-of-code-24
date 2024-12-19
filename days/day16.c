@@ -39,8 +39,6 @@ void traverse(
             dist[5 * i + 4] = curr;
     }
 
-    // printf("(%ld %ld) %c best: %ld\n", pos.r, pos.c, ndir + '0',
-    // dist[5*i+ndir]);
     offset_t dir = neighbours[ndir];
     traverse(board, dist, point_add(pos, dir), ndir, curr + 1, best);
 #pragma GCC unroll 4
