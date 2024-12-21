@@ -59,6 +59,11 @@ long part1(FILE *input) {
     }
 
     size_t *dist = calloc(board.width * board.height * 5, sizeof(size_t));
+    if (dist == NULL) {
+        board_delete(&board);
+        perror("malloc failed");
+        return -1;
+    }
 
     point_t pos = board_find_first(&board, 'S');
     size_t best = 0;
@@ -115,6 +120,11 @@ long part2(FILE *input) {
 
     size_t len = board_length(&board);
     size_t *dist = calloc(len * 5, sizeof(size_t));
+    if (dist == NULL) {
+        board_delete(&board);
+        perror("malloc failed");
+        return -1;
+    }
 
     point_t pos = board_find_first(&board, 'S');
     size_t best = 0;
