@@ -159,6 +159,8 @@ long part2(FILE *input) {
     VEC_NEW(x);
     VEC_WITH_CAPACITY(p, BOARD_SIZE);
     for (size_t i = 0; i < BOARD_SIZE; i++) {
+        // Skip vertices without any neighbours (we didn't normalize edges, so
+        // some rows may be all zeroes)
         uint v = 0;
         for (size_t j = 0; j < BOARD_SIZE; j++) {
             if (adj[i * BOARD_SIZE + j]) {

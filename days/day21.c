@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -22,7 +23,7 @@ inline long point_dist(point_t a[const static 1], point_t b[const static 1]) {
 
 str_vec moves(board_t kbd[const static 1], char src, char dest) {
     str_vec ans;
-    VEC_NEW(ans);
+    VEC_WITH_CAPACITY(ans, 2);
 
     point_t start = board_find_first(kbd, src);
     point_t target = board_find_first(kbd, dest);
@@ -97,7 +98,7 @@ long num_from_string(char s[static 1]) {
 
 long keypad_move_cost(char src, char dest, size_t npads);
 
-long keypad_code_cost(char code[const static 1], size_t npads) {
+inline long keypad_code_cost(char code[const static 1], size_t npads) {
     long res = 0;
     char prev = 'A';
     for (char *c = code; *c; c++) {
@@ -110,9 +111,9 @@ long keypad_code_cost(char code[const static 1], size_t npads) {
 long keypad_move_cost(char src, char dest, size_t npads) {
     static long cache[5 * 5 * MAX_PADS] = {0};
 
-    size_t cache_key = 5UL * 5 * npads
-                       + 5 * (strchr(keypad_c, src) - keypad_c - 1)
-                       + (strchr(keypad_c, dest) - keypad_c - 1);
+    const size_t cache_key = 5UL * 5 * npads
+                             + 5 * (strchr(keypad_c, src) - keypad_c - 1)
+                             + (strchr(keypad_c, dest) - keypad_c - 1);
     if (cache[cache_key] > 0)
         return cache[cache_key];
     if (npads == 1) {
@@ -124,10 +125,10 @@ long keypad_move_cost(char src, char dest, size_t npads) {
     }
 
     str_vec possible = moves(&keypad, src, dest);
-    long ans = -1;
+    long ans = LONG_MAX;
     for (size_t i = 0; i < possible.size; i++) {
         long curr = keypad_code_cost(VEC_AT(possible, i), npads - 1);
-        if (ans == -1 || curr < ans)
+        if (curr < ans)
             ans = curr;
         free(VEC_AT(possible, i));
     }
@@ -139,10 +140,10 @@ long keypad_move_cost(char src, char dest, size_t npads) {
 
 long numpad_move_cost(char src, char dest, size_t npads) {
     str_vec possible = moves(&numpad, src, dest);
-    long ans = -1;
+    long ans = LONG_MAX;
     for (size_t i = 0; i < possible.size; i++) {
         long curr = keypad_code_cost(VEC_AT(possible, i), npads - 1);
-        if (ans == -1 || curr < ans)
+        if (curr < ans)
             ans = curr;
         free(VEC_AT(possible, i));
     }
@@ -150,7 +151,7 @@ long numpad_move_cost(char src, char dest, size_t npads) {
     return ans;
 }
 
-long numpad_code_cost(char code[const static 1], size_t npads) {
+inline long numpad_code_cost(char code[const static 1], size_t npads) {
     long res = 0;
     char prev = 'A';
     for (char *c = code; *c; c++) {
