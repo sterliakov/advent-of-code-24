@@ -1,6 +1,7 @@
 #ifndef CUSTOM_VEC_H
 #define CUSTOM_VEC_H
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,6 +30,7 @@
 
 #define VEC_PUSH(vec, val)                                                   \
     do {                                                                     \
+        assert((vec).capacity > 0);                                          \
         if ((vec).size >= (vec).capacity) {                                  \
             (vec).capacity *= 2;                                             \
             void *new_data                                                   \
@@ -57,5 +59,17 @@
     for (size_t i = 0; i < (vec).size; i++) { \
         (fn)(VEC_AT((vec), i));               \
     }
+
+#define VEC_CLONE(dest, src)                                               \
+    do {                                                                   \
+        (dest).size = (src).size;                                          \
+        (dest).capacity = (src).capacity;                                  \
+        (dest).data = calloc((src).capacity, sizeof(*(src).data));         \
+        if ((dest).data == NULL) {                                         \
+            fprintf(stderr, "calloc failed\n");                            \
+            exit(1);                                                       \
+        }                                                                  \
+        memcpy((dest).data, (src).data, (src).size * sizeof(*(src).data)); \
+    } while (0)
 
 #endif

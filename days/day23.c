@@ -63,19 +63,84 @@ long part1(FILE *input) {
     return ans / 6;
 }
 
-bool is_subset(uint_vec left[static 1], bool right[static 1]) {
-    for (size_t i = 0; i < left->size; i++) {
-        int p = VEC_AT(*left, i);
-        if (!right[p])
-            return false;
-    }
-    return true;
-}
-
 int cmp(const void *left, const void *right) {
     uint a = *(uint *)left;
     uint b = *(uint *)right;
     return (a > b) - (a < b);
+}
+
+inline void intersect_adj(
+    bool adj[const static 1],
+    uint_vec set[const static 1],
+    uint v,
+    uint since,
+    uint_vec dest[static 1]
+) {
+    dest->size = 0;
+    for (size_t i = since; i < set->size; i++) {
+        uint c = VEC_AT(*set, i);
+        if (adj[v * BOARD_SIZE + c]) {
+            VEC_PUSH(*dest, c);
+        }
+    }
+}
+
+// Find a pivot vertex with max amount of neighbours
+inline uint pivot(bool adj[const static 1], uint_vec p[const static 1]) {
+    uint best = 0, bestv = 0;
+    for (size_t i = 0; i < p->size; i++) {
+        uint v = 0;
+        for (size_t j = 0; j < p->size; j++) {
+            if (adj[i * BOARD_SIZE + j])
+                v++;
+        }
+        if (v > bestv) {
+            best = i;
+            bestv = v;
+        }
+    }
+    return best;
+}
+
+// https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+void bron_kerbosch(
+    bool adj[const static 1],
+    uint_vec r[static 1],
+    uint_vec p[static 1],
+    uint_vec x[static 1],
+    uint_vec best[static 1]
+) {
+    if (p->size == 0 && x->size == 0) {
+        if (r->size > best->size) {
+            VEC_DELETE(*best);
+            VEC_CLONE(*best, *r);
+        }
+        return;
+    }
+    if (r->size + p->size <= best->size) {
+        // We're only looking for the maximum clique. If (nodes we have + nodes
+        // we'll check) is already less than the best, abort early - we can't
+        // find a bigger clique here.
+        return;
+    }
+    uint_vec p1, x1;
+    VEC_WITH_CAPACITY(p1, p->size + 1);
+    VEC_WITH_CAPACITY(x1, x->size + 1);
+    uint u = pivot(adj, p);
+
+    for (size_t i = 0; i < p->size; i++) {
+        uint v = VEC_AT(*p, i);
+        if (adj[v * BOARD_SIZE + u])
+            continue;
+        VEC_PUSH(*r, v);
+        intersect_adj(adj, p, v, i, &p1);
+        intersect_adj(adj, x, v, 0, &x1);
+        bron_kerbosch(adj, r, &p1, &x1, best);
+        r->size--;
+        VEC_PUSH(*x, v);
+    }
+    VEC_DELETE(p1);
+    VEC_DELETE(x1);
 }
 
 long part2(FILE *input) {
@@ -86,44 +151,30 @@ long part2(FILE *input) {
     }
     read_edges(input, adj);
 
-    bool *seen = calloc(BOARD_SIZE, sizeof(bool));
-    if (seen == NULL) {
-        free(adj);
-        perror("calloc failed");
-        return -1;
-    }
-    uint_vec best, curr;
+    uint_vec best;
     VEC_NEW(best);
-    VEC_NEW(curr);
 
-    // We're looking for a largest clique in a graph.
-    // The trivial check below is only a heuristic, but it finds a clique
-    // if that's same size as max vertex degree, which is the case in our
-    // input.
-    for (uint a = 0; a < BOARD_SIZE; a++) {
-        if (seen[a])
-            continue;
-        seen[a] = true;
-        curr.size = 0;
-        VEC_PUSH(curr, a);
-        for (uint b = 0; b < BOARD_SIZE; b++) {
-            if (!adj[a * BOARD_SIZE + b])
-                continue;
-            if (is_subset(&curr, adj + b * BOARD_SIZE)) {
-                seen[b] = true;
-                VEC_PUSH(curr, b);
+    uint_vec r, p, x;
+    VEC_NEW(r);
+    VEC_NEW(x);
+    VEC_WITH_CAPACITY(p, BOARD_SIZE);
+    for (size_t i = 0; i < BOARD_SIZE; i++) {
+        uint v = 0;
+        for (size_t j = 0; j < BOARD_SIZE; j++) {
+            if (adj[i * BOARD_SIZE + j]) {
+                v++;
+                break;
             }
         }
-        if (curr.size > best.size) {
-            VEC_DELETE(best);
-            best = curr;
-            VEC_NEW(curr);
+        if (v != 0) {
+            VEC_PUSH(p, i);
         }
     }
-
+    bron_kerbosch(adj, &r, &p, &x, &best);
     free(adj);
-    free(seen);
-    VEC_DELETE(curr);
+    VEC_DELETE(r);
+    VEC_DELETE(p);
+    VEC_DELETE(x);
 
     long ans = (long)best.size;
     qsort(best.data, best.size, sizeof(int), cmp);
