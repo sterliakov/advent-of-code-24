@@ -41,6 +41,10 @@ str_vec moves(board_t kbd[const static 1], char src, char dest) {
     // 1 - horizontally first
     if (ok1) {
         char *s1 = calloc(len + 2, sizeof(char));
+        if (s1 == NULL) {
+            perror("malloc failed");
+            exit(1);
+        }
         size_t i = 0;
         for (size_t c = target.c; c < start.c; c++) {
             s1[i++] = '<';
@@ -61,6 +65,10 @@ str_vec moves(board_t kbd[const static 1], char src, char dest) {
     // 2 - vertically first
     if (ok2) {
         char *s2 = calloc(len + 2, sizeof(char));
+        if (s2 == NULL) {
+            perror("malloc failed");
+            exit(1);
+        }
         size_t i = 0;
         for (size_t r = start.r; r < target.r; r++) {
             s2[i++] = 'v';
