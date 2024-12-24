@@ -72,4 +72,7 @@
         memcpy((dest).data, (src).data, (src).size * sizeof(*(src).data)); \
     } while (0)
 
+#define VEC_SORT(vec, cmp) \
+    qsort((vec).data, (vec).size, sizeof(*(vec).data), (cmp))
+
 #endif
