@@ -17,7 +17,7 @@ const long MIN_WIN = 100;
 typedef VEC_OF(point_t) points_vec;
 
 void traverse(
-    board_t board[const static 1],
+    const board_t board[static 1],
     size_t dist[static 1],
     point_t start,
     point_t end
@@ -50,8 +50,8 @@ void traverse(
 }
 
 size_t check_pairs(
-    board_t board[const static 1],
-    size_t dist[const static 1],
+    const board_t board[static 1],
+    const size_t dist[static 1],
     size_t max_dist
 ) {
     size_t ans = 0;

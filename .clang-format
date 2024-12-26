@@ -7,3 +7,4 @@ AlignAfterOpenBracket: BlockIndent
 BreakBeforeBinaryOperators: All
 IndentPPDirectives: BeforeHash
 PointerAlignment: Right
+QualifierAlignment: Left

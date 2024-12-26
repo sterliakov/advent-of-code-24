@@ -35,22 +35,22 @@ str_vec read_patterns(FILE *input) {
     return arr;
 }
 
-int void_strcmp(void const *left, void const *right) {
-    char const *const *const a = left;
-    char const *const *const b = right;
+int void_strcmp(const void *left, const void *right) {
+    const char *const *const a = left;
+    const char *const *const b = right;
     return strcmp(*a, *b);
 }
 
-int void_strcmp_first(void const *left, void const *right) {
-    char const *const *const a = left;
-    char const *const *const b = right;
+int void_strcmp_first(const void *left, const void *right) {
+    const char *const *const a = left;
+    const char *const *const b = right;
     return strncmp(*a, *b, 1);
 }
 
 size_t check_line(
     char line[static 1],
     size_t start,
-    str_vec patterns[static 1],
+    const str_vec patterns[static 1],
     size_t cache[static 1],
     bool abort_early
 ) {

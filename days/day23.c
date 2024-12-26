@@ -12,7 +12,7 @@ const size_t BOARD_SIZE = LETTERS * LETTERS;
 typedef unsigned int uint;
 typedef VEC_OF(uint) uint_vec;
 
-inline uint charcode(char s[static 2]) {
+inline uint charcode(const char s[static 2]) {
     return LETTERS * (s[0] - 'a') + (s[1] - 'a');
 }
 
@@ -70,8 +70,8 @@ int cmp(const void *left, const void *right) {
 }
 
 inline void intersect_adj(
-    bool adj[const static 1],
-    uint_vec set[const static 1],
+    const bool adj[static 1],
+    const uint_vec set[static 1],
     uint v,
     uint since,
     uint_vec dest[static 1]
@@ -86,7 +86,7 @@ inline void intersect_adj(
 }
 
 // Find a pivot vertex with max amount of neighbours
-inline uint pivot(bool adj[const static 1], uint_vec p[const static 1]) {
+inline uint pivot(const bool adj[static 1], const uint_vec p[static 1]) {
     uint best = 0, bestv = 0;
     for (size_t i = 0; i < p->size; i++) {
         uint v = 0;
@@ -104,7 +104,7 @@ inline uint pivot(bool adj[const static 1], uint_vec p[const static 1]) {
 
 // https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
 void bron_kerbosch(
-    bool adj[const static 1],
+    const bool adj[static 1],
     uint_vec r[static 1],
     uint_vec p[static 1],
     uint_vec x[static 1],

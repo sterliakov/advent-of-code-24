@@ -9,7 +9,12 @@
 
 typedef VEC_OF(int_fast8_t *) intp_vec;
 
-inline bool check(int_fast8_t *lock, int_fast8_t *key, size_t w, size_t h) {
+inline bool check(
+    const int_fast8_t lock[static 1],
+    const int_fast8_t key[static 1],
+    size_t w,
+    size_t h
+) {
     for (size_t i = 0; i < w; i++) {
         // both are at least one
         if ((size_t)(lock[i] + key[i] - 2) >= h - 1)

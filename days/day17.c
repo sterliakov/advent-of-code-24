@@ -39,7 +39,7 @@ bool read_input(FILE *input, state_t *state, op_vec *ops) {
     return (*ops).size > 0;
 }
 
-value_t opval(state_t state[const static 1], op_t operand) {
+inline value_t opval(const state_t state[static 1], op_t operand) {
     if (operand <= 3)
         return operand;
     else if (operand == 4)
@@ -52,7 +52,7 @@ value_t opval(state_t state[const static 1], op_t operand) {
         return -1;
 }
 
-value_t adiv(value_t a, value_t val) {
+inline value_t adiv(value_t a, value_t val) {
     if (val < CHAR_BIT * sizeof(value_t)) {
         return a >> val;
     } else {
@@ -62,7 +62,7 @@ value_t adiv(value_t a, value_t val) {
 
 bool run(
     state_t state[static 1],
-    op_vec ops[const static 1],
+    const op_vec ops[static 1],
     bool (*out)(op_t, void *),
     void *out_state
 ) {

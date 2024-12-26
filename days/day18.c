@@ -14,7 +14,7 @@ static offset_t neighbours[] = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
 typedef VEC_OF(point_t) points_vec;
 
 void traverse(
-    board_t board[const static 1],
+    const board_t board[static 1],
     size_t dist[static 1],
     point_t start,
     point_t end
@@ -58,9 +58,9 @@ points_vec read_input(FILE *input) {
 }
 
 size_t shortest_path(
-    board_t *board,
-    size_t *dist,
-    points_vec *steps,
+    board_t board[static 1],
+    size_t dist[static 1],
+    const points_vec steps[static 1],
     size_t steps_count
 ) {
     assert(steps->size >= steps_count);

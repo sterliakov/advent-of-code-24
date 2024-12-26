@@ -23,7 +23,7 @@ bool should_visit1(size_t i, void *state) {
 }
 
 void traverse(
-    board_t board[const static 1],
+    const board_t board[static 1],
     int scores[static 1],
     bool (*chk)(size_t, void *),
     void *state,
@@ -43,7 +43,7 @@ void traverse(
     }
 }
 
-long final_score(board_t board[const static 1], int scores[static 1]) {
+long final_score(const board_t board[static 1], int scores[static 1]) {
     long total = 0;
     for (size_t i = 0; i < board_length(board); i++) {
         if (board->body[i] == '0') {

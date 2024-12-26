@@ -17,11 +17,11 @@ static board_t numpad = {numpad_c, 4, 3};
 static char keypad_c[] = " ^A<v>";
 static board_t keypad = {keypad_c, 2, 3};
 
-inline long point_dist(point_t a[const static 1], point_t b[const static 1]) {
+inline long point_dist(const point_t a[static 1], const point_t b[static 1]) {
     return labs((long)(a->r - b->r)) + labs((long)(a->c - b->c));
 }
 
-str_vec moves(board_t kbd[const static 1], char src, char dest) {
+str_vec moves(const board_t kbd[static 1], char src, char dest) {
     str_vec ans;
     VEC_WITH_CAPACITY(ans, 2);
 
@@ -90,7 +90,7 @@ str_vec moves(board_t kbd[const static 1], char src, char dest) {
     return ans;
 }
 
-long num_from_string(char s[static 1]) {
+long num_from_string(const char s[static 1]) {
     while (*s && (*s <= '0' || *s > '9'))
         s++;
     return atol(s);
@@ -98,10 +98,10 @@ long num_from_string(char s[static 1]) {
 
 long keypad_move_cost(char src, char dest, size_t npads);
 
-inline long keypad_code_cost(char code[const static 1], size_t npads) {
+inline long keypad_code_cost(const char code[static 1], size_t npads) {
     long res = 0;
     char prev = 'A';
-    for (char *c = code; *c; c++) {
+    for (const char *c = code; *c; c++) {
         res += keypad_move_cost(prev, *c, npads);
         prev = *c;
     }
@@ -151,10 +151,10 @@ long numpad_move_cost(char src, char dest, size_t npads) {
     return ans;
 }
 
-inline long numpad_code_cost(char code[const static 1], size_t npads) {
+inline long numpad_code_cost(const char code[static 1], size_t npads) {
     long res = 0;
     char prev = 'A';
-    for (char *c = code; *c; c++) {
+    for (const char *c = code; *c; c++) {
         res += numpad_move_cost(prev, *c, npads);
         prev = *c;
     }

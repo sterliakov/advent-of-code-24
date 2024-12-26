@@ -7,7 +7,7 @@
 
 #include "../lib/board.c"
 
-offset_t get_offset(char c) {
+inline offset_t get_offset(char c) {
     switch (c) {
         case '<':
             return (offset_t){0, -1};
@@ -22,7 +22,7 @@ offset_t get_offset(char c) {
     }
 }
 
-point_t find_start(board_t board[const static 1]) {
+point_t find_start(const board_t board[static 1]) {
     size_t len = board_length(board);
     for (size_t i = 0; i < len; i++) {
         if (board->body[i] == '@') {
@@ -30,6 +30,18 @@ point_t find_start(board_t board[const static 1]) {
         }
     }
     assert(false);
+}
+
+size_t char_score(const board_t board[static 1], char ch) {
+    size_t total = 0;
+    for (size_t r = 0; r < board->height; r++) {
+        for (size_t c = 0; c < board->width; c++) {
+            total += board_at_unchecked(board, (point_t){r, c}) == ch
+                         ? 100 * r + c
+                         : 0;
+        }
+    }
+    return total;
 }
 
 long part1(FILE *input) {
@@ -62,15 +74,7 @@ long part1(FILE *input) {
         }
     }
 
-    size_t total = 0;
-    for (size_t r = 0; r < board.height; r++) {
-        for (size_t c = 0; c < board.width; c++) {
-            total += board_at_unchecked(&board, (point_t){r, c}) == 'O'
-                         ? 100 * r + c
-                         : 0;
-        }
-    }
-
+    size_t total = char_score(&board, 'O');
     board_delete(&board);
     return (long)total;
 }
@@ -164,14 +168,7 @@ long part2(FILE *input) {
     }
     board_delete(&clone);
 
-    size_t total = 0;
-    for (size_t r = 0; r < board.height; r++) {
-        for (size_t c = 0; c < board.width; c++) {
-            total += board_at_unchecked(&board, (point_t){r, c}) == '['
-                         ? 100 * r + c
-                         : 0;
-        }
-    }
+    size_t total = char_score(&board, '[');
 
     board_delete(&board);
     return (long)total;

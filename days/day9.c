@@ -9,7 +9,11 @@ typedef struct __attribute__((aligned(32))) entry_t {
     int id;
 } entry_t;
 
-bool read_input(FILE *input, entry_t **entries, size_t count[static 1]) {
+bool read_input(
+    FILE *input,
+    entry_t *entries[static 1],
+    size_t count[static 1]
+) {
     size_t alloc = 4;
     *entries = malloc(alloc * sizeof(entry_t));
     if (*entries == NULL) {

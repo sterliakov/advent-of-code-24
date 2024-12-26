@@ -10,7 +10,7 @@
 static offset_t neighbours[] = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
 
 void traverse(
-    board_t board[const static 1],
+    const board_t board[static 1],
     size_t dist[static 1],
     point_t pos,
     unsigned char ndir,
@@ -79,7 +79,7 @@ long part1(FILE *input) {
 }
 
 bool restore(
-    board_t board[const static 1],
+    const board_t board[static 1],
     size_t dist[static 1],
     bool vis[static 1],
     point_t pos,

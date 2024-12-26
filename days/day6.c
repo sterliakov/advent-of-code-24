@@ -13,7 +13,7 @@ const char MOVE_MASK = (1 << DIRECTIONS_COUNT) - 1;
 const char EMPTY = 1 << DIRECTIONS_COUNT;
 const char WALL = 1 << (DIRECTIONS_COUNT + 1);
 
-bool board_translate(board_t board[static 1], point_t *start) {
+bool board_translate(board_t board[static 1], point_t start[static 1]) {
     size_t offset = 0;
     for (char *ch = board->body + board_length(board) - 1; ch >= board->body;
          ch--) {

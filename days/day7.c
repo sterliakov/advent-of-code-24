@@ -5,7 +5,7 @@
 
 #include "../lib/input.c"
 
-bool line_ok_1(long first, int *const nums, size_t nums_count, long target) {
+bool line_ok_1(long first, const int *nums, size_t nums_count, long target) {
     if (nums_count == 0)
         return first == target;
     if (first > target)
@@ -14,7 +14,7 @@ bool line_ok_1(long first, int *const nums, size_t nums_count, long target) {
            || line_ok_1(first + *nums, nums + 1, nums_count - 1, target);
 }
 
-long nconcat(long left, int right) {
+inline long nconcat(long left, int right) {
     int r = right;
     do {
         left *= 10;
@@ -23,7 +23,7 @@ long nconcat(long left, int right) {
     return left + right;
 }
 
-bool line_ok_2(long first, int *const nums, size_t nums_count, long target) {
+bool line_ok_2(long first, const int *nums, size_t nums_count, long target) {
     if (nums_count == 0)
         return first == target;
     if (first > target)
@@ -35,7 +35,7 @@ bool line_ok_2(long first, int *const nums, size_t nums_count, long target) {
            );
 }
 
-long solve(FILE *input, bool (*chk)(long, int *const, size_t, long)) {
+long solve(FILE *input, bool (*chk)(long, const int[static 1], size_t, long)) {
     size_t nums_alloc = 4, nums_count = 0;
     int *nums = malloc(nums_alloc * sizeof(int));
     if (nums == NULL) {

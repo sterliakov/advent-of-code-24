@@ -15,18 +15,21 @@ typedef struct __attribute__((aligned(16))) pair_t {
     size_t right;
 } pair_t;
 
-int rules_read(FILE *input, rule_t **dest, size_t *amount);
-int rule_cmp(void const *lhs, void const *rhs);
+int rules_read(FILE *input, rule_t *dest[static 1], size_t amount[static 1]);
+int rule_cmp(const void *lhs, const void *rhs);
 
 bool line_valid(
-    int const line[const static 1],
+    const int line[static 1],
     size_t size,
-    rule_t const rules[const static 1],
+    const rule_t rules[static 1],
     size_t rule_count,
     pair_t *mistake
 );
 
-long solve(FILE *input, long (*chk)(int *, size_t, rule_t *, size_t)) {
+long solve(
+    FILE *input,
+    long (*chk)(int[static 1], size_t, const rule_t[static 1], size_t)
+) {
     rule_t *rules = NULL;
     size_t rule_count;
     if (rules_read(input, &rules, &rule_count) == -1) {
@@ -60,7 +63,12 @@ long solve(FILE *input, long (*chk)(int *, size_t, rule_t *, size_t)) {
     return total;
 }
 
-long chk1(int *nums, size_t nums_count, rule_t *rules, size_t rule_count) {
+long chk1(
+    int nums[static 1],
+    size_t nums_count,
+    const rule_t rules[static 1],
+    size_t rule_count
+) {
     return line_valid(nums, nums_count, rules, rule_count, NULL)
                ? nums[nums_count / 2]
                : 0;
@@ -70,7 +78,12 @@ long part1(FILE *input) {
     return solve(input, chk1);
 }
 
-long chk2(int *nums, size_t nums_count, rule_t *rules, size_t rule_count) {
+long chk2(
+    int nums[static 1],
+    size_t nums_count,
+    const rule_t rules[static 1],
+    size_t rule_count
+) {
     pair_t mistake = {0, 0};
     if (line_valid(nums, nums_count, rules, rule_count, &mistake)) {
         return 0;
@@ -87,7 +100,7 @@ long part2(FILE *input) {
     return solve(input, chk2);
 }
 
-int rules_read(FILE *input, rule_t **dest, size_t *amount) {
+int rules_read(FILE *input, rule_t *dest[static 1], size_t amount[static 1]) {
     size_t size = 4, curr = 0;
     rule_t *rules = malloc(size * sizeof(rule_t));
     if (rules == NULL) {
@@ -120,22 +133,22 @@ int rules_read(FILE *input, rule_t **dest, size_t *amount) {
     return 0;
 }
 
-int rule_cmp(void const *lhs, void const *rhs) {
-    rule_t const *const a = lhs;
-    rule_t const *const b = rhs;
+int rule_cmp(const void *lhs, const void *rhs) {
+    const rule_t *const a = lhs;
+    const rule_t *const b = rhs;
     int lc = ((a->left > b->left) - (a->left < b->left));
     return lc == 0 ? ((a->right > b->right) - (a->right < b->right)) : lc;
 }
 
 bool line_valid(
-    int const line[const static 1],
+    const int line[static 1],
     size_t size,
-    rule_t const rules[const static 1],
+    const rule_t rules[static 1],
     size_t rule_count,
     pair_t *mistake
 ) {
-    for (int const *right = line + size - 1; right > line; right--) {
-        for (int const *left = right - 1; left >= line; left--) {
+    for (const int *right = line + size - 1; right > line; right--) {
+        for (const int *left = right - 1; left >= line; left--) {
             if (bsearch(
                     &(rule_t){*right, *left}, rules, rule_count, sizeof(rule_t),
                     rule_cmp

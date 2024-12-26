@@ -12,13 +12,13 @@ typedef struct __attribute__((aligned(32))) cell_t {
     point_t pos;
 } cell_t;
 
-int cell_cmp(void const *lhs, void const *rhs) {
-    cell_t const *const a = lhs;
-    cell_t const *const b = rhs;
+int cell_cmp(const void *lhs, const void *rhs) {
+    const cell_t *const a = lhs;
+    const cell_t *const b = rhs;
     return (a->val > b->val) - (a->val < b->val);
 }
 
-size_t unpack_board(board_t board[const static 1], cell_t cells[static 1]) {
+size_t unpack_board(const board_t board[static 1], cell_t cells[static 1]) {
     size_t count = 0;
     for (size_t r = 0; r < board->height; r++) {
         for (size_t c = 0; c < board->width; c++) {

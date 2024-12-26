@@ -72,7 +72,7 @@ int wire_name_cmp(const void *left, const void *right) {
     return strncmp(a->name, b->name, 3);
 }
 
-wire_vec dedupe(wire_vec wires[const static 1]) {
+wire_vec dedupe(const wire_vec wires[static 1]) {
     wire_vec ans;
     VEC_WITH_CAPACITY(ans, wires->size + 1);
     wire_t prev = VEC_AT(*wires, 0);
@@ -88,7 +88,7 @@ wire_vec dedupe(wire_vec wires[const static 1]) {
 }
 
 inline wire_t *
-wire_get(wire_vec wires[const static 1], char name[const static 3]) {
+wire_get(const wire_vec wires[static 1], const char name[static 3]) {
     wire_t *wire = bsearch(
         &(wire_t){{name[0], name[1], name[2]}, 0}, wires->data, wires->size,
         sizeof(wire_t), wire_name_cmp
@@ -101,7 +101,7 @@ wire_get(wire_vec wires[const static 1], char name[const static 3]) {
 }
 
 inline int_fast8_t
-gate_perform(gate_t gate[const static 1], int_fast8_t left, int_fast8_t right) {
+gate_perform(const gate_t gate[static 1], int_fast8_t left, int_fast8_t right) {
     switch (gate->type) {
         case gate_and:
             return (int_fast8_t)(left & right);
@@ -113,7 +113,7 @@ gate_perform(gate_t gate[const static 1], int_fast8_t left, int_fast8_t right) {
     assert(false);
 }
 
-uint_fast64_t as_number(wire_vec wires[const static 1], char c) {
+uint_fast64_t as_number(const wire_vec wires[static 1], char c) {
     const wire_t *first_z = insertion_point(
         &(wire_t){{c, 0, 0}, 0}, wires->data, wires->size, sizeof(wire_t),
         wire_name_cmp
@@ -196,8 +196,8 @@ inline void gate_out_swap(gate_t left[static 1], gate_t right[static 1]) {
 }
 
 inline gate_t *find_gate(
-    gate_vec gates[const static 1],
-    char with[const static 3],
+    const gate_vec gates[static 1],
+    const char with[static 3],
     gate_type op,
     bool *is_left
 ) {
@@ -220,7 +220,7 @@ inline gate_t *find_gate(
 }
 
 inline gate_t *
-find_gate_by_out(gate_vec gates[const static 1], char out[const static 3]) {
+find_gate_by_out(const gate_vec gates[static 1], const char out[static 3]) {
     for (size_t i = 0; i < gates->size; i++) {
         gate_t gate = VEC_AT(*gates, i);
         if (strncmp(gate.out, out, 3) == 0) {
@@ -230,9 +230,9 @@ find_gate_by_out(gate_vec gates[const static 1], char out[const static 3]) {
     return NULL;
 }
 
-int void_3char_cmp(void const *left, void const *right) {
-    char const *const *const a = left;
-    char const *const *const b = right;
+int void_3char_cmp(const void *left, const void *right) {
+    const char *const *const a = left;
+    const char *const *const b = right;
     return strncmp(*a, *b, 3);
 }
 

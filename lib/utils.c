@@ -10,7 +10,7 @@
         (b) = tmp;    \
     } while (0);
 
-long gcd(long a, long b) {
+inline long gcd(long a, long b) {
     long temp;
     while (b != 0) {
         temp = a % b;
@@ -20,7 +20,7 @@ long gcd(long a, long b) {
     return a;
 }
 
-size_t numdigits(long val) {
+inline size_t numdigits(long val) {
     size_t n = 0;
     for (; val; val /= 10) {
         n++;

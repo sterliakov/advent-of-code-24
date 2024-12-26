@@ -25,28 +25,28 @@ typedef struct __attribute__((aligned(32))) board_t {
 } board_t;
 
 bool board_read(FILE *input, board_t *board);
-void board_print(board_t board[const static 1]);
-void board_delete(board_t board[const static 1]);
-bool board_clone(board_t dest[static 1], board_t src[const static 1]);
-inline char board_at(board_t board[const static 1], point_t point);
-inline char board_at_unchecked(board_t board[const static 1], point_t point);
+void board_print(const board_t board[static 1]);
+void board_delete(const board_t board[static 1]);
+bool board_clone(board_t dest[static 1], const board_t src[static 1]);
+inline char board_at(const board_t board[static 1], point_t point);
+inline char board_at_unchecked(const board_t board[static 1], point_t point);
 inline bool board_set(board_t board[static 1], point_t point, char val);
 inline void
 board_set_unchecked(board_t board[static 1], point_t point, char val);
 inline bool
-board_p2i(board_t board[const static 1], point_t point, size_t *index);
-inline size_t board_p2i_or_panic(board_t board[const static 1], point_t point);
-inline size_t board_p2i_unchecked(board_t board[const static 1], point_t point);
-inline point_t board_i2p(board_t board[const static 1], size_t index);
-inline size_t board_length(board_t board[const static 1]);
+board_p2i(const board_t board[static 1], point_t point, size_t *index);
+inline size_t board_p2i_or_panic(const board_t board[static 1], point_t point);
+inline size_t board_p2i_unchecked(const board_t board[static 1], point_t point);
+inline point_t board_i2p(const board_t board[static 1], size_t index);
+inline size_t board_length(const board_t board[static 1]);
 bool board_slice(
-    board_t board[const static 1],
+    const board_t board[static 1],
     point_t start,
     char direction,
     size_t count,
     char *dest
 );
-point_t board_find_first(board_t board[const static 1], char c);
+point_t board_find_first(const board_t board[static 1], char c);
 
 // Making it a function can lead to 2x performance degradation
 #define point_add(pos, dir) \
@@ -94,11 +94,11 @@ bool board_read(FILE *input, board_t *board) {
     return true;
 }
 
-void board_delete(board_t board[const static 1]) {
+void board_delete(const board_t board[static 1]) {
     free(board->body);
 }
 
-void board_print(board_t board[const static 1]) {
+void board_print(const board_t board[static 1]) {
     assert(board->width > 0);
     for (size_t i = 0; i < board->width; i++) {
         putc('=', stdout);
@@ -115,7 +115,7 @@ void board_print(board_t board[const static 1]) {
     putc('\n', stdout);
 }
 
-bool board_clone(board_t dest[static 1], board_t src[const static 1]) {
+bool board_clone(board_t dest[static 1], const board_t src[static 1]) {
     dest->width = src->width;
     dest->height = src->height;
     size_t len = board_length(src);
@@ -128,28 +128,28 @@ bool board_clone(board_t dest[static 1], board_t src[const static 1]) {
 }
 
 inline bool
-board_p2i(board_t board[const static 1], point_t point, size_t *index) {
+board_p2i(const board_t board[static 1], point_t point, size_t *index) {
     if (point.r >= board->height || point.c >= board->width) {
         return false;
     }
     *index = point.r * board->width + point.c;
     return true;
 }
-inline size_t board_p2i_or_panic(board_t board[const static 1], point_t point) {
+inline size_t board_p2i_or_panic(const board_t board[static 1], point_t point) {
     assert(point.r < board->height && point.c < board->width);
     return point.r * board->width + point.c;
 }
 
 inline size_t
-board_p2i_unchecked(board_t board[const static 1], point_t point) {
+board_p2i_unchecked(const board_t board[static 1], point_t point) {
     return point.r * board->width + point.c;
 }
 
-inline point_t board_i2p(board_t board[const static 1], size_t index) {
+inline point_t board_i2p(const board_t board[static 1], size_t index) {
     return (point_t){index / board->width, index % board->width};
 }
 
-inline char board_at(board_t board[const static 1], point_t point) {
+inline char board_at(const board_t board[static 1], point_t point) {
     size_t i = 0;
     if (!board_p2i(board, point, &i)) {
         return 0;
@@ -157,7 +157,7 @@ inline char board_at(board_t board[const static 1], point_t point) {
     return board->body[i];
 }
 
-inline char board_at_unchecked(board_t board[const static 1], point_t point) {
+inline char board_at_unchecked(const board_t board[static 1], point_t point) {
     return board->body[board_p2i_unchecked(board, point)];
 }
 
@@ -175,7 +175,7 @@ board_set_unchecked(board_t board[static 1], point_t point, char val) {
     board->body[board_p2i_unchecked(board, point)] = val;
 }
 
-inline size_t board_length(board_t board[const static 1]) {
+inline size_t board_length(const board_t board[static 1]) {
     return board->width * board->height;
 }
 
@@ -189,7 +189,7 @@ inline size_t board_length(board_t board[const static 1]) {
  * @return bool - true on success, false if out of bounds
  **/
 bool board_slice(
-    board_t board[const static 1],
+    const board_t board[static 1],
     point_t start,
     char direction,
     size_t count,
@@ -234,7 +234,7 @@ bool board_slice(
     return true;
 }
 
-point_t board_find_first(board_t board[const static 1], char c) {
+point_t board_find_first(const board_t board[static 1], char c) {
     size_t len = board_length(board);
     for (size_t i = 0; i < len; i++) {
         if (board->body[i] == c) {
