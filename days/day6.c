@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -13,8 +14,8 @@ const char MOVE_MASK = (1 << DIRECTIONS_COUNT) - 1;
 const char EMPTY = 1 << DIRECTIONS_COUNT;
 const char WALL = 1 << (DIRECTIONS_COUNT + 1);
 
-bool board_translate(board_t board[static 1], point_t start[static 1]) {
-    size_t offset = 0;
+point_t board_translate(board_t board[static 1]) {
+    size_t offset = (size_t)-1;
     for (char *ch = board->body + board_length(board) - 1; ch >= board->body;
          ch--) {
         switch (*ch) {
@@ -29,9 +30,8 @@ bool board_translate(board_t board[static 1], point_t start[static 1]) {
                 break;
         }
     }
-    size_t r = offset / board->width, c = offset % board->width;
-    *start = (point_t){r, c};
-    return true;
+    assert(offset != (size_t)-1);
+    return board_i2p(board, offset);
 }
 
 long traverse(board_t board[static 1], point_t pos) {
@@ -58,7 +58,7 @@ long traverse(board_t board[static 1], point_t pos) {
             // cycle found - been there in the same direction
             return -1;
         }
-        board_set(board, pos, (char)(dir_flag | ch));
+        board_set_unchecked(board, pos, (char)(dir_flag | ch));
         pos.c += dir.dc;
         pos.r += dir.dr;
     }
@@ -71,16 +71,9 @@ long part1(FILE *input) {
         perror("Failed to read the board");
         return -1;
     }
-
-    point_t start;
-    if (!board_translate(&board, &start)) {
-        fprintf(stderr, "Start symbol (^) not found\n");
-        board_delete(&board);
-        return -1;
-    }
+    point_t start = board_translate(&board);
 
     long total = traverse(&board, start);
-
     board_delete(&board);
     return total;
 }
@@ -91,39 +84,30 @@ long part2(FILE *input) {
         perror("Failed to read the board");
         return -1;
     }
-    size_t board_size = board_length(&board);
+    point_t start = board_translate(&board);
 
-    point_t start;
-    if (!board_translate(&board, &start)) {
-        fprintf(stderr, "Start symbol (^) not found\n");
-        board_delete(&board);
-        return -1;
-    }
-
-    board_t board_copy = board;
-    board_copy.body = calloc(sizeof(char), board_size);
-    if (board_copy.body == NULL) {
+    board_t board_copy;
+    if (!board_clone(&board_copy, &board)) {
         perror("Failed to allocate memory for a board copy");
         board_delete(&board);
         return -1;
     }
-    memcpy(board_copy.body, board.body, board_size * sizeof(char));
 
     traverse(&board_copy, start);
-    char *orig_visits = calloc(sizeof(char), board_size);
-    if (orig_visits == NULL) {
+    board_t orig_visits;
+    if (!board_clone(&orig_visits, &board_copy)) {
         perror("Failed to allocate memory for a board copy");
         board_delete(&board);
         board_delete(&board_copy);
         return -1;
     }
-    memcpy(orig_visits, board_copy.body, board_size * sizeof(char));
 
     long total = 0;
-    size_t start_index = start.r * board.width + start.c;
+    size_t board_size = board_length(&board);
+    size_t start_index = board_p2i_unchecked(&board, start);
     for (size_t i = 0; i < board_size; i++) {
         if (board.body[i] != EMPTY || i == start_index
-            || (orig_visits[i] & MOVE_MASK) == 0) {
+            || (orig_visits.body[i] & MOVE_MASK) == 0) {
             // Skip if there's already an obstacle or the cell is unreachable
             continue;
         }
@@ -135,6 +119,6 @@ long part2(FILE *input) {
 
     board_delete(&board);
     board_delete(&board_copy);
-    free(orig_visits);
+    board_delete(&orig_visits);
     return total;
 }
